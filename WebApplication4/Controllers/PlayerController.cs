@@ -16,7 +16,7 @@ namespace WebApplication4.Controllers
         [HttpGet]
         public ActionResult GetPlayer() {
             List<Player> players = new List<Player>();
-            
+
             try {
                 if (PlayerData.PalyerTable.Rows.Count > 0)
                 {
@@ -32,7 +32,7 @@ namespace WebApplication4.Controllers
                             }
                         );
                     }
-                    
+
                     return Ok(players);
                 }
                 else
@@ -41,6 +41,37 @@ namespace WebApplication4.Controllers
                 }
             }
             catch (Exception ex) {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        [HttpGet("{playerNumber}")]
+        public ActionResult GetPlayer(int playerNumber)
+        {
+            try
+            {
+                DataRow dr = PlayerData.PalyerTable.Select("PlayerNumber=" + playerNumber.ToString()).FirstOrDefault(); // finds all rows with id==2 and selects first or null if haven't found any
+                if (dr != null)
+                {
+                    Player player = new Player()
+                    {
+                        Name = dr["Name"].ToString(),
+                        Email = dr["Email"].ToString(),
+                        Phone = dr["Phone"].ToString(),
+                        Tier = dr["Tier"].ToString(),
+                        PlayerNumber = playerNumber
+                    };
+
+                    return Ok(player);
+                }
+                else
+                {
+                    return NotFound();
+                }
+
+            }
+            catch (Exception ex)
+            {
                 throw new Exception(ex.Message);
             }
         }
